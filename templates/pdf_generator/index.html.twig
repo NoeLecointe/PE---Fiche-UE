@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>PDF</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> 
+    {# <link rel="stylesheet" href="../public/css/design.css"> #}
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <style type="text/css">
+        .table tr {
+            border: solid 1px black!important;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <img src="{{img}}" style="width:100%;"> 
+    <br>
+    <h1 class="text-center">{{ue.code_ue}} - {{ue.nom_ue}}</h1>
+    <p><b>Formation :</b> {% for f in formation %}{{f.nom_formation}} ({{f.accronym_Forma}}) {% endfor %} 
+    <p><b>Catégorie :</b> {{ue.categorie_ue}} | <b>Période :</b> {{ue.periode}} | <b>Crédits :</b> {{ue.credits}} | <b>Cible :</b> {{ue.cible}}</p>
+    <p><b>Heures :</b> CM ({{ue.heure_cm}}), TD ({{ue.heure_td}}), TP ({{ue.heure_tp}}), THE ({{ue.heure_the}}) | <b>Projet :</b> {% if ue.projet == 0 %}non{% else %}oui{% endif %} | <b>Alternance :</b> {% if ue.alternance == 0 %}non{% else %}oui{% endif %}</p>
+    <p><b>Français :</b> {{ue.niv_francais}} | <b>Anglais :</b> {% if ue.anglais == 0 %}non{% else %}oui{% endif %} | <b>Antécédent :</b> {{ue.antecedent}} | <b>Modalité :</b> {{ue.modalite}}</p>
+    <p><b>Acquis d'apprentissages visés :</b><br>{{ue.acquis}}</p>
+    <p><b>Savoirs et connaissances théoriques dans l'UE :</b><br>{{ue.savoir}}</p>
+    <p><b>Techniques, outils et méthodes utilisés dans l'UE :</b><br>{{ue.techniques}}</p>
+    <p><b>Labels :</b><br>
+    <b>DDRS : </b> {% if ue.label_ddrs == 0 %}non{% else %}oui<br>{{ue.label_ddrs_prec}}{% endif %}<br>
+    <b>Recherche : </b> {% if ue.label_recherche == 0 %}non{% else %}oui<br>{{ue.label_recherche_prec}}{% endif %}<br>
+    </p>
+    <p><b>Commentaire :</b> {{ue.commentaire}}</p><br>
+
+    <hr>
+    <h3><u>Compétences :</u></h3>
+    <table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Activité</th>
+            <th>Compétences</th>
+            <th>Notion</th>
+            <th>Application</th>
+            <th>Maitrise</th>
+            <th>Expertise</th>
+        </tr>
+    </thead>
+    {% for act in activite %}
+        {% for f in formation %}
+            {% if act.accronym_Forma == f.accronym_Forma or act.accronym_Forma == null %}
+                {% set compte = '0' %}
+                {% for n in name %}
+                    {% if n.id_act == act.id_act %}
+                        {% set compte = compte + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {% if compte != 0 %}
+                    <tr>
+                        <td class="align-middle" rowspan="{{compte}}">{{act.id_act}}. {{act.nom}}</td>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% for n in name %} 
+            {% if n.id_act == act.id_act %}
+                <td>{{n.nom_competence}}</td>
+                <td>{{n.notion}}</td>
+                <td>{{n.application}}</td>
+                <td>{{n.maitrise}}</td>
+                <td>{{n.expertise}}</td>
+            <tr>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+</body>
+</html>

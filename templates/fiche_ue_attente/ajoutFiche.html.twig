@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}nouvelle fiche UE{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<h1> Création d'une fiche UE (attente)</h1>
+
+
+<form id="recherche" method="post" action="/ficheUEattente" class="well" enctype="multipart/form-data">
+
+    <fieldset class="form-group"> <legend>Créer une nouvelle fiche</legend><br>
+
+    <div class="form-group row">
+	    <label for="code" class="col-sm-2 col-form-label col-form-label-sm">Code UE</label>
+        <div class="col-sm-10">
+            <input type="text" id="code" name="code" class="form-control form-control-sm" placeholder="Code"/>
+        </div>
+    </div>
+
+        <div class="form-group row">
+        <label for="nom" class="col-sm-2 col-form-label col-form-label-sm">nom de l'UE</label>
+        <div class="col-sm-10">
+            <input type="text" id="nom" name="nom" class="form-control form-control-sm" placeholder="Nom"/>
+        </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="formation" class="col-sm-2 col-form-label col-form-label-sm">Formation</label>
+      <div class="col-sm-10">
+        <select name="idformation">
+
+            {% for f in form %}
+
+            <option value="{{f.id}}">{{f.nom_formation}}</option>
+
+            {% endfor %}
+
+        </select>
+      </div>
+    </div>
+
+        <input type="submit" class="btn btn-primary" name="valider_ajout" value="Ajouter"/>
+    </fieldset>
+   </form>
+
+
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste UE{% endblock %}
+
+{% block h1 %} Liste des UE validées{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+{% if mess is defined %}
+  {{mess}}
+{% endif %}
+
+<table class="table table-hover table-condensed">
+    <thead>
+        <tr>
+            <th class="text-center">UE</th>
+            <th class="text-center">Catégorie</th>
+            <th class="text-center">Période</th>
+            <th class="text-center">Crédit</th>
+            <th class="text-center">Formation</th>
+            <th class="text-center">Détail</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for u in ue %}
+        <tr>
+            <td class="align-middle text-center">{{u.code_ue}}</td>
+            <td class="align-middle text-center">{{u.categorie_ue}}</td>
+            <td class="align-middle text-center">{{u.periode}}</td>
+            <td class="align-middle text-center">{{u.credits}}</td>
+            <td class="align-middle text-center">{{u.nom_formation}}</td>
+            <td class="align-middle text-center"><a href="/ficheUE/{{u.code_ue}}" class="btn btn-success"><i class="uil uil-eye"> Consulter</i></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

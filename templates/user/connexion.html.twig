@@ -1,0 +1,26 @@
+{% extends "base.html.twig" %}
+
+{% block h1 %}Connexion{% endblock %}
+
+{% block body %}
+
+    <form id="recherche" method="post" action="/connexion" class="well" enctype="multipart/form-data">
+        <fieldset class="form-group"> <br>
+            <div class="row col-sm-5 m-3">
+                <label for="mail" class="col-sm-4 text-center col-form-label col-form-label-sm font-weight-bold pl-5">Mail : </label>
+                <div class="col-sm-8">
+                    <input type="text" id="mail" name="mail" class="form-control form-control-sm text-center" placeholder="Mail" />
+                </div>
+            </div>
+            <div class="row col-sm-5 m-3">
+                <label for="code" class="col-sm-4 text-center col-form-label col-form-label-sm font-weight-bold pl-5">Code : </label>
+                <div class="col-sm-8">
+                    <input type="password" id="code" name="code" class="form-control form-control-sm text-center" placeholder="Code" />
+                </div>
+            </div>
+            <div class="row col-sm-5 d-flex align-items-end">
+                <input disabled type="submit" class="btn btn-info m-2" name="connexion" value="Connexion"/>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}

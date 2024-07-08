@@ -1,0 +1,496 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier fiche UE{% endblock %}
+
+{% block h1 %}
+
+    {% if ue.validation == 1 %}
+        Fiche {{ue.code_ue}} en attente de validation
+    {% else %}
+        Modifier fiche {{ue.code_ue}}
+    {% endif %}
+ {% endblock %}
+
+{% block body %}
+
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+{% if mess is defined %}
+  {{mess}}
+{% endif %}
+
+    <form id="recherche" method="post" action="/ficheUEattente/modif" class="well" enctype="multipart/form-data">
+
+        <fieldset class="form-group d-flex flex-column justify-content-center align-items-center"> <br>
+
+            <div class="table-bordered pb-0 pt-3 pl-3 pr-3 justify-content-center">
+                <div class="form-group row justify-content-around">
+                    <label for="code" class="text-center col-form-label col-form-label-sm font-weight-bold pl-5">Code UE : </label>
+                    <div class="col-sm-4">
+                        <input readonly type="text" id="code" name="code" class="form-control form-control-sm text-center" placeholder="Code" value="{{ue.code_ue}}" />
+                    </div>
+
+                    <label for="forma" class="text-center col-form-label col-form-label-sm font-weight-bold pl-5">Formation : </label>
+                    <div class="col-sm-4">
+                        <input readonly type="text" id="forma" name="forma" class="form-control form-control-sm text-center" placeholder="Formation" value="{% for f in formation %}{{f.nom_formation}} ({{f.accronym_Forma}}) {% endfor %}" />
+                    </div>
+                </div>
+                <div class="form-group row justify-content-around">
+                    <label for="nom" class="text-center col-form-label col-form-label-sm font-weight-bold pl-5">nom de l'UE : </label>
+                    <div class="col-sm-10">
+                        <input {% if ue.validation == 1 %}readonly{% endif %} type="text" id="nom" name="nom" class="form-control form-control-sm text-center" placeholder="Nom" value="{{ue.nom_ue}}"/>
+                    </div>
+                </div>
+                <div class="form-group row justify-content-around">
+                    <label for="cat" class="text-center col-form-label col-form-label-sm font-weight-bold">Catégorie :</label>
+                    <div class="col-sm-2">
+                        <select {% if ue.validation == 1 %}readonly{% endif %}  name="cat" class="form-control form-control-sm">
+                            <option></option>
+                            <option {% if ue.categorie_ue == "CS" %} selected="selected"{% endif %}>CS</option>
+                            <option {% if ue.categorie_ue == "TM" %} selected="selected"{% endif %}>TM</option>
+                            <option {% if ue.categorie_ue == "HT" %} selected="selected"{% endif %}>HT</option>
+                            <option {% if ue.categorie_ue == "ME" %} selected="selected"{% endif %}>ME</option>
+                            <option {% if ue.categorie_ue == "ST" %} selected="selected"{% endif %}>ST</option>
+                            <option {% if ue.categorie_ue == "EC" %} selected="selected"{% endif %}>EC</option>
+                        </select>
+                    </div>
+                    <label for="periode" class="text-center col-form-label col-form-label-sm font-weight-bold">Période :</label>
+                    <div class="col-sm-2">
+                        {% if ue.validation == 1 %}
+                            <input readonly type="text"class="form-control form-control-sm text-center"value="{{ue.periode}}" />
+                        {% else %}
+                            <select name="periode" class="form-control form-control-sm">
+                                <option></option>
+                                <option {% if ue.periode == "Automne" %} selected="selected"{% endif %}>Automne</option> 
+                                <option {% if ue.periode == "Printemps" %} selected="selected"{% endif %}>Printemps</option>
+                                <option {% if ue.periode == "Sur 1 an" %} selected="selected"{% endif %}>Sur 1 an</option>
+                                <option {% if ue.periode == "Intersemestre (Hiver)" %} selected="selected"{% endif %}>Intersemestre (Hiver)</option>
+                                <option {% if ue.periode == "Été" %} selected="selected"{% endif %}>Été</option>
+                                <option {% if ue.periode == "Sur plusieurs années" %} selected="selected"{% endif %}>Sur plusieurs années</option>
+                            </select>
+                        {% endif %}
+                    </div>
+                    <label for="Credit" class="text-center col-form-label col-form-label-sm font-weight-bold">Crédits :</label>
+                    <div class="col-sm-1">
+                        <input {% if ue.validation == 1 %}readonly{% endif %} type="number" id="credits" name="credits" class="form-control form-control-sm" min="0" max="10" value="{{ue.credits}}"/>
+                    </div>
+
+                    <label for="Cible" class="text-center col-form-label col-form-label-sm font-weight-bold">Cible :</label>
+                    <div class="col-sm-2">
+                        <input {% if ue.validation == 1 %}readonly{% endif %} type="text" id="cible" name="cible" class="form-control form-control-sm text-center" value="{{ue.cible}}"/>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-12 mb-0 justify-content-center">
+                <div class="row col-sm-6 table-bordered align-items-center justify-content-around m-2 {% if ue.validation == 1 %} p-2 {% endif %}">
+                    <label for="heure" class="text-center col-sm-4 col-form-label col-form-label-sm font-weight-bold">Heures : </label>
+                    <div class="col-sm-2">
+                        <label for="CM" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">CM</label>
+                        <div class="col-sm-12 p-0">
+                            <input {% if ue.validation == 1 %}readonly{% endif %} type="number" id="CM" name="CM" class="form-control form-control-sm" min="0" max="100" value="{{ue.heure_cm}}"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="TD" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">TD</label>
+                        <div class="col-sm-12 p-0">
+                            <input {% if ue.validation == 1 %}readonly{% endif %} type="number" id="TD" name="TD" class="form-control form-control-sm" min="0" max="100" value="{{ue.heure_td}}"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="TP" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">TP</label>
+                        <div class="col-sm-12 p-0">
+                            <input {% if ue.validation == 1 %}readonly{% endif %} type="number" id="TP" name="TP" class="form-control form-control-sm" min="0" max="100" value="{{ue.heure_tp}}"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="THE" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">THE</label>
+                        <div class="col-sm-12 p-0">
+                            <input {% if ue.validation == 1 %}readonly{% endif %} type="number" id="THE" name="THE" class="form-control form-control-sm" value="{{ue.heure_the}}"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row col-sm-2 table-bordered align-items-center justify-content-around {% if ue.validation == 0 %} p-0 pt-2 {% endif %} m-2">
+                    <label for="projet" class="text-center {% if ue.validation == 0 %} col-sm-5 {% else %} col-sm-7 {% endif %} col-form-label col-form-label-sm font-weight-bold p-0">Projet :</label>
+                    {% if ue.validation == 1 %}
+                        <div class="col-sm-4 p-0 text-center">
+                            <div>
+                                {% if ue.projet == 0 %}
+                                    <input readonly type="text" class="form-control form-control-sm text-center" value="non" />
+                                {% elseif ue.projet == 1 %}
+                                    <input readonly type="text" class="form-control form-control-sm text-center" value="oui" />
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-sm-7 p-0 text-center">
+                            <div>
+                                <div>
+                                    <input type="radio" id="non" name="projet" value="non" {% if ue.projet == 0 %} checked {% endif %}>
+                                    <label for="non">Non</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="oui" name="projet" value="oui" {% if ue.projet == 1 %} checked {% endif %}>
+                                    <label for="oui">Oui</label>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="row col-sm-2 table-bordered align-items-center justify-content-around {% if ue.validation == 0 %} p-0 pt-2 {% endif %} m-2">
+                    <label for="alternance" class="text-center {% if ue.validation == 0 %} col-sm-6 {% else %} col-sm-7 {% endif %} col-form-label col-form-label-sm font-weight-bold p-0">Alternance :</label>
+                    {% if ue.validation == 1 %}
+                        <div class="col-sm-4 p-0 text-center">
+                            <div>
+                                {% if ue.alternance == 0 %}
+                                    <input readonly type="text" class="form-control form-control-sm text-center" value="non" />
+                                {% elseif ue.alternance == 1 %}
+                                    <input readonly type="text" class="form-control form-control-sm text-center" value="oui" />
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-sm-6 p-0 text-center">
+                            <div>
+                                <div>
+                                    <input type="radio" id="nonAl" name="alternance" value="non" {% if ue.alternance == 0 %} checked {% endif %}>
+                                    <label for="nonAl">Non</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="ouiAl" name="alternance" value="oui" {% if ue.alternance == 1 %} checked {% endif %}>
+                                    <label for="ouiAl">Oui</label>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-12 justify-content-center mb-0">
+                <div class="row col-sm-4 table-bordered align-items-center justify-content-around p-3 m-2">
+                    <label class="text-center col-form-label col-form-label-sm font-weight-bold">Langues : </label>
+                    
+                    <div>
+                        <label for="fr" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">Français</label>
+                        <div class="col-sm-12 p-0">
+                            <select {% if ue.validation == 1 %}readonly{% endif %} name="fr" class="form-control form-control-sm">
+                                <option></option>
+                                <option {% if ue.niv_francais == "B1" %} selected="selected"{% endif %}>B1</option>
+                                <option {% if ue.niv_francais == "B2" %} selected="selected"{% endif %}>B2</option>
+                                <option {% if ue.niv_francais == "C1" %} selected="selected"{% endif %}>C1</option>
+                                <option {% if ue.niv_francais == "C2" %} selected="selected"{% endif %}>C2</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4 p-0">
+                        <label for="anglais" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">Anglais</label>
+                        <div class="row col-sm-12 justify-content-center ml-0 p-0">
+                            {% if ue.validation == 1 %}
+                                {% if ue.anglais == 0 %}
+                                    <input readonly type="text" class="form-control form-control-sm text-center" value="non" />
+                                {% elseif ue.anglais == 1 %}
+                                    <input readonly type="text" class="form-control form-control-sm text-center" value="oui" />
+                                {% endif %}
+                            {% else %}
+                                <div class="mr-1">
+                                    <input type="radio" id="nonA" name="anglais" value="non" {% if ue.anglais == 0 %} checked {% endif %}>
+                                    <label for="nonA">Non</label>
+                                </div>
+                                <div class="ml-1">
+                                    <input type="radio" id="ouiA" name="anglais" value="oui" {% if ue.anglais == 1 %} checked {% endif %}>
+                                    <label for="ouiA">Oui</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row col-sm-2 table-bordered align-items-center justify-content-around align-items-aroud p-3 m-2">
+                    <label for="antecedent" class="text-center col-sm-12 col-form-label col-form-label-sm font-weight-bold p-0">Antécédent :</label>
+                    <div class="col-sm-12 p-0">
+                        <input {% if ue.validation == 1 %}readonly{% endif %} type="text" id="antecedent" name="antecedent" class="form-control form-control-sm text-center" value="{{ue.antecedent}}"/>
+                    </div>
+                </div>
+                <div class="row col-sm-2 table-bordered align-items-center justify-content-around align-items-aroud p-3 m-2">
+                    <label for="modalite" class="text-center col-sm-12 col-form-label col-form-label-sm font-weight-bold p-0">Modalité Principale :</label>
+                    <div class="col-sm-12 p-0">
+                        <input {% if ue.validation == 1 %}readonly{% endif %} type="text" id="modalite" name="modalite" class="form-control form-control-sm text-center" value="{{ue.modalite}}"/>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-12 justify-content-center mb-0 table-bordered align-items-center justify-content-around ">
+                <div class="row col-sm-12  align-items-center justify-content-around p-3">
+                
+                    <label class="text-center col-form-label col-form-label-sm font-weight-bold pb-3">Acquis d'apprentissages visés :</label>
+                    <div class="row col-sm-12 align-items-center justify-content-around">
+                        <div class="col-sm-9 p-0">
+                            <textarea {% if ue.validation == 1 %}readonly{% endif %} type="text" id="acquis" name="acquis" class="form-control form-control-sm" maxlength="1000" rows="5">{{ue.acquis}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="row col-sm-12 align-items-center justify-content-around">
+                        <div class="row col-sm-6 align-items-center justify-content-around">
+                            <label for="fr" class="text-center col-form-label col-form-label-sm p-3 font-weight-bold">Savoirs et connaissances théoriques dans l’UE :</label>
+                            <div class="row col-sm-12 align-items-center justify-content-around">
+                                <div class="col-sm-10 p-0">
+                                    <textarea {% if ue.validation == 1 %}readonly{% endif %} type="text" id="savoir" name="savoir" class="form-control form-control-sm" maxlength="1000" rows="5">{{ue.savoir}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-sm-6 align-items-center justify-content-around">
+                            <label for="fr" class="text-cente col-form-label col-form-label-sm p-3 font-weight-bold">Techniques, outils et méthodes utilisés dans l’UE :</label>
+                            <div class="row col-sm-12 align-items-center justify-content-around">
+                                <div class="col-sm-10 p-0">
+                                    <textarea {% if ue.validation == 1 %}readonly{% endif %} type="text" id="techniques" name="techniques" class="form-control form-control-sm" maxlength="1000" rows="5">{{ue.techniques}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-10 justify-content-center mb-0 table-bordered align-items-center justify-content-around ">
+                <div class="row col-sm-12  align-items-center justify-content-around pt-3 pb-3 pr-5 pl-5">
+                    <label class="text-center col-form-label col-form-label-sm font-weight-bold pb-3">Labels :</label>
+                    <div class="row col-sm-12 align-items-center justify-content-around">
+                        <label class="text-center col-sm-1 col-form-label col-form-label-sm p-0">DDRS</label>
+                        <div class="col-sm-1 p-0 text-center">
+                            <div>
+                                {% if ue.validation == 1 %}
+                                    {% if ue.label_ddrs == 0 %}
+                                        <input readonly type="text" class="form-control form-control-sm text-center" value="non" />
+                                    {% elseif ue.label_ddrs == 1 %}
+                                        <input readonly type="text" class="form-control form-control-sm text-center" value="oui" />
+                                    {% endif %}
+                                {% else %}
+                                    <div>
+                                        <input type="radio" id="nonDDRS" name="ddrs" value="non" {% if ue.label_ddrs == 0 %} checked {% endif %}>
+                                        <label for="nonDDRS">Non</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="ouiDDRS" name="ddrs" value="oui" {% if ue.label_ddrs == 1 %} checked {% endif %}>
+                                        <label for="ouiDDRS">Oui</label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-sm-9 p-0">
+                            <textarea {% if ue.validation == 1 %}readonly{% endif %} type="text" id="ddrs_prec" name="ddrs_prec" class="form-control form-control-sm" maxlength="1000" rows="5">{{ue.label_ddrs_prec}}</textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 m-2"></div>
+                    <div class="row col-sm-12 align-items-center justify-content-around">
+                        <label for="fr" class="text-center col-sm-1 col-form-label col-form-label-sm p-0">Recherche</label>
+                        <div class="col-sm-1 p-0 text-center">
+                            <div>
+                                {% if ue.validation == 1 %}
+                                    {% if ue.label_recherche == 0 %}
+                                        <input readonly type="text" class="form-control form-control-sm text-center" value="non" />
+                                    {% elseif ue.label_recherche == 1 %}
+                                        <input readonly type="text" class="form-control form-control-sm text-center" value="oui" />
+                                    {% endif %}
+                                {% else %}
+                                    <div>
+                                        <input type="radio" id="nonRech" name="recherche" value="non" {% if ue.label_recherche == 0 %} checked {% endif %}>
+                                        <label for="nonRech">Non</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="ouiRech" name="recherche" value="oui" {% if ue.label_recherche == 1 %} checked {% endif %}>
+                                        <label for="ouiRech">Oui</label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-sm-9 p-0">
+                            <textarea {% if ue.validation == 1 %}readonly{% endif %} type="text" id="recherche_prec" name="recherche_prec" class="form-control form-control-sm" maxlength="1000" rows="5">{{ue.label_recherche_prec}}</textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-8 justify-content-center mb-0 table-bordered align-items-center justify-content-around p-3">
+                <label class="text-center col-form-label col-form-label-sm font-weight-bold pb-3">Commentaire :</label>
+                <div class="row col-sm-12 align-items-center justify-content-around">
+                    <div class="col-sm-12 p-0">
+                        <textarea {% if ue.validation == 1 %}readonly{% endif %} type="text" id="commentaire" name="commentaire" class="form-control form-control-sm" maxlength="1000" rows="5">{{ue.commentaire}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            {% if ue.validation == 1 %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Activité</th>
+                            <th>Compétences</th>
+                            <th>Notion</th>
+                            <th>Application</th>
+                            <th>Maitrise</th>
+                            <th>Expertise</th>
+                        </tr>
+                    </thead>
+                    {% for act in activite %}
+                        {% for f in formation %}
+                            {% if act.accronym_Forma == f.accronym_Forma or act.accronym_Forma == null %}
+                                {% set compte = '0' %}
+                                {% for n in name %}
+                                    {% if n.id_act == act.id_act %}
+                                        {% set compte = compte + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if compte != 0 %}
+                                    <tr>
+                                        <td class="align-middle" rowspan="{{compte}}">{{act.id_act}}. {{act.nom}}</td>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {% for n in name %} 
+                            {% if n.id_act == act.id_act %}
+                                <td>{{n.nom_competence}}</td>
+                                <td class="align-middle text-center">{% if n != "" %}{{n.notion}}{% endif %}</td>
+                                <td class="align-middle text-center">{% if n != "" %}{{n.application}}{% endif %}</td>
+                                <td class="align-middle text-center">{% if n != "" %}{{n.maitrise}}{% endif %}</td>
+                                <td class="align-middle text-center">{% if n != "" %}{{n.expertise}}{% endif %}</td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </table>
+            {% else %}
+                <div class="form-group row col-sm-12 justify-content-center mb-0 table-bordered align-items-center justify-content-around ">
+                    <div class="row col-sm-12  align-items-center justify-content-around P-3">
+                        <label class="text-center col-form-label col-form-label-sm font-weight-bold pb-3">Compétences : </label>
+                        
+                        <div class="row">
+                            <label for="fr" class="text-center col-sm-1 col-form-label col-form-label-sm p-0">Activité</label>
+                            <div class="col-sm-11 p-0">
+                                <select id="acti" name="fr" class="form-control form-control-sm">
+                                    <option></option>
+                                    {% for act in activite %}
+                                        {% for f in formation %}
+                                            {% if act.accronym_Forma == f.accronym_Forma or act.accronym_Forma == null %}
+                                                <option value="{{act.id_act}}">{{act.id_act}}. {{act.nom}}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 pt-3">
+                            <label class="text-center col-sm-12 col-form-label col-form-label-sm p-0 pb-3 font-weight-bold">Liste :</label>
+                            <div class="row col-sm-12 ml-0 p-0">
+                                {% for c in competences %} 
+                                <div class="row col-sm-12 justify-content-around align-items-center comp d-none {{c.id_act}} table-bordered p-1 m-1">
+                                    <div class="col-sm-7">
+                                        <p class="m-0"> - {{c.nom_competence}} </p>
+                                    </div>
+
+                                    {% set n = "" %}
+                                    {% for na in name %}
+                                        {% if na.nom_competence == c.nom_competence %}
+                                            {% set n = na %}
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {# <p>{{n.notion}}</p> #}
+                                    <div class="row col-sm-5 justify-content-around align-items-center">
+                                        <div class="col-sm-3 p-0">
+                                            <label class="text-center col-sm-12 col-form-label col-form-label-sm">Notion</label>
+                                            <div class="col-sm-12">
+                                                <input {% if ue.validation == 1 %}readonly{% endif %} type="number"name="name[{{c.id}}][notion]" class="form-control form-control-sm" min="0" max="4" value="{% if n != "" %}{{n.notion}}{% endif %}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-0">
+                                            <label class="text-center col-sm-12 col-form-label col-form-label-sm">Application</label>
+                                            <div class="col-sm-12">
+                                                <input {% if ue.validation == 1 %}readonly{% endif %} type="number" name="name[{{c.id}}][application]" class="form-control form-control-sm" min="0" max="4" value="{% if n != "" %}{{n.application}}{% endif %}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-0">
+                                            <label class="text-center col-sm-12 col-form-label col-form-label-sm">Matrise</label>
+                                            <div class="col-sm-12">
+                                                <input {% if ue.validation == 1 %}readonly{% endif %} type="number" name="name[{{c.id}}][maitrise]" class="form-control form-control-sm" min="0" max="4" value="{% if n != "" %}{{n.maitrise}}{% endif %}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 p-0">
+                                            <label class="text-center col-sm-12 col-form-label col-form-label-sm">Expertise</label>
+                                            <div class="col-sm-12">
+                                                <input {% if ue.validation == 1 %}readonly{% endif %} type="number" name="name[{{c.id}}][expertise]" class="form-control form-control-sm" min="0" max="4" value="{% if n != "" %}{{n.expertise}}{% endif %}"/>
+                                            </div>
+                                        </div>
+                                    </div>  
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <hr>
+            <div class="form-group row d-flex justify-content-center">
+                <input {% if ue.validation == 1 %}disabled{% endif %} type="submit" class="btn btn-info m-2" name="modif" value="Enregistrer"/>
+                {% if ue.validation == 1 %}
+                    <input type="submit" class="btn btn-danger m-2" name="modif" value="Annuler la soumission"/>
+                {% else %}
+                    <input type="submit" class="btn btn-success m-2" name="modif" value="Soumettre"/>
+                {% endif %}
+            </div>
+            <div class="form-group row d-flex justify-content-center">
+                <input disabled type="submit" class="btn btn-danger m-2" name="modif" value="Refuser"/>
+                <input disabled type="submit" class="btn btn-success m-2" name="modif" value="Valider"/>
+            </div>
+        </fieldset>
+   </form>
+{% endblock %}
+{% block javascript %}
+    {# // <script src="{{ asset('public\js\modifFiche.js') }}"></script> #}
+
+    <script type="text/javascript">
+        var activite = document.getElementById("acti");
+        activite.addEventListener("change", comp);
+
+        function comp() {
+            var act = activite.value;  
+            cacher();
+            if (act) {
+                afficher(act);
+            }
+        };
+
+        function cacher() {
+            var competence = document.querySelectorAll(".comp");
+
+            for (let i = 0; i < competence.length; i++) {
+                if (!competence[i].classList.contains("d-none")) {
+                    competence[i].classList.toggle("d-none");
+                }
+                
+            }
+        };
+
+        function afficher(id) {
+            var com = document.getElementsByClassName(id);
+            for (let i = 0; i < com.length; i++) {
+                com[i].classList.toggle("d-none");
+            }
+        };
+
+
+    </script> 
+{% endblock %}

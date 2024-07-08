@@ -1,0 +1,325 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail UE{% endblock %}
+
+{% block h1 %} Détail de la fiche de l'UE : {{ue.code_ue}}{% endblock %}
+
+{% block body %}
+
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+{% if mess is defined %}
+  {{mess}}
+{% endif %}
+
+<a href="/pdf/generator/{{ue.code_ue}}" target="_blank" class="btn btn-success"><i class="uil uil-download-alt"> PDF</i></a>
+
+    <form id="recherche" method="post" action="/ficheUEattente/modif" class="well" enctype="multipart/form-data">
+
+        <fieldset class="form-group d-flex flex-column justify-content-center align-items-center"> <br>
+
+            <div class="table-bordered pb-0 pt-3 pl-3 pr-3 justify-content-center">
+                <div class="form-group row justify-content-around">
+                    <label for="code" class="text-center col-form-label col-form-label-sm font-weight-bold pl-5">Code UE : </label>
+                    <div class="col-sm-4">
+                        <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.code_ue}}" />
+                    </div>
+
+                    <label for="forma" class="text-center col-form-label col-form-label-sm font-weight-bold pl-5">Formation : </label>
+                    <div class="col-sm-4">
+                        <input disabled type="text" class="form-control form-control-sm text-center" value="{% for f in formation %}{{f.nom_formation}} ({{f.accronym_Forma}}) {% endfor %}" />
+                    </div>
+                </div>
+                <div class="form-group row justify-content-around">
+                    <label for="nom" class="text-center col-form-label col-form-label-sm font-weight-bold pl-5">nom de l'UE : </label>
+                    <div class="col-sm-10">
+                        <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.nom_ue}}"/>
+                    </div>
+                </div>
+                <div class="form-group row justify-content-around">
+                    <label for="cat" class="text-center col-form-label col-form-label-sm font-weight-bold">Catégorie :</label>
+                    <div class="col-sm-1">
+                        <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.categorie_ue}}" />
+                    </div>
+                    <label for="periode" class="text-center col-form-label col-form-label-sm font-weight-bold">Période :</label>
+                    <div class="col-sm-2">
+                        <input disabled type="text"class="form-control form-control-sm text-center"value="{{ue.periode}}" />
+                    </div>
+                    <label for="Credit" class="text-center col-form-label col-form-label-sm font-weight-bold">Crédits :</label>
+                    <div class="col-sm-1">
+                        <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.credits}}" />
+                    </div>
+
+                    <label for="Cible" class="text-center col-form-label col-form-label-sm font-weight-bold">Cible :</label>
+                    <div class="col-sm-2">
+                        <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.cible}}" />
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-12 mb-0 justify-content-center">
+                <div class="row col-sm-6 table-bordered align-items-center justify-content-around m-2 p-2">
+                    <label for="heure" class="text-center col-sm-4 col-form-label col-form-label-sm font-weight-bold">Heures : </label>
+                    <div class="col-sm-2">
+                        <label for="CM" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">CM</label>
+                        <div class="col-sm-12 p-0">
+                            <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.heure_cm}}" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="TD" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">TD</label>
+                        <div class="col-sm-12 p-0">
+                            <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.heure_td}}" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="TP" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">TP</label>
+                        <div class="col-sm-12 p-0">
+                            <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.heure_tp}}" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="THE" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">THE</label>
+                        <div class="col-sm-12 p-0">
+                            <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.heure_the}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row col-sm-2 table-bordered align-items-center justify-content-around m-2">
+                    <label for="projet" class="text-center col-sm-7 col-form-label col-form-label-sm font-weight-bold p-0">Projet :</label>
+                    <div class="col-sm-4 p-0 text-center">
+                        <div>
+                            {% if ue.projet == 0 %}
+                                <input disabled type="text" class="form-control form-control-sm text-center" value="non" />
+                            {% elseif ue.projet == 1 %}
+                                <input disabled type="text" class="form-control form-control-sm text-center" value="oui" />
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row col-sm-2 table-bordered align-items-center justify-content-around m-2">
+                    <label for="alternance" class="text-center col-sm-7 col-form-label col-form-label-sm font-weight-bold p-0">Alternance :</label>
+                    <div class="col-sm-4 p-0 text-center">
+                        <div>
+                            {% if ue.alternance == 0 %}
+                                <input disabled type="text" class="form-control form-control-sm text-center" value="non" />
+                            {% elseif ue.alternance == 1 %}
+                                <input disabled type="text" class="form-control form-control-sm text-center" value="oui" />
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-12 justify-content-center mb-0">
+                <div class="row col-sm-4 table-bordered align-items-center justify-content-around p-3 m-2">
+                    <label class="text-center col-form-label col-form-label-sm font-weight-bold">Langues : </label>
+                    
+                    <div class="col-sm-4">
+                        <label for="fr" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">Français</label>
+                        <div class="col-sm-12 p-0">
+                            <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.niv_francais}}" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label for="anglais" class="text-center col-sm-12 col-form-label col-form-label-sm p-0">Anglais</label>
+                        <div class="row col-sm-12 justify-content-center ml-0 p-0">
+                            {% if ue.anglais == 0 %}
+                                <input disabled type="text" class="form-control form-control-sm text-center" value="non" />
+                            {% elseif ue.anglais == 1 %}
+                                <input disabled type="text" class="form-control form-control-sm text-center" value="oui" />
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row col-sm-2 table-bordered align-items-center justify-content-around align-items-aroud p-3 m-2">
+                    <label for="antecedent" class="text-center col-sm-12 col-form-label col-form-label-sm font-weight-bold p-0">Antécédent :</label>
+                    <div class="col-sm-12 p-0">
+                        <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.antecedent}}" />
+                    </div>
+                </div>
+                <div class="row col-sm-2 table-bordered align-items-center justify-content-around align-items-aroud p-3 m-2">
+                    <label for="modalite" class="text-center col-sm-12 col-form-label col-form-label-sm font-weight-bold p-0">Modalité Principale :</label>
+                    <div class="col-sm-12 p-0">
+                        <input disabled type="text" class="form-control form-control-sm text-center" value="{{ue.modalite}}" />
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-12 justify-content-center mb-0 table-bordered align-items-center justify-content-around ">
+                <div class="row col-sm-12  align-items-center justify-content-around p-3">
+                
+                    <label class="text-center col-form-label col-form-label-sm font-weight-bold pb-3">Acquis d'apprentissages visés :</label>
+                    <div class="row col-sm-12 align-items-center justify-content-around">
+                        <div class="col-sm-9 p-0">
+                            <textarea disabled type="text" class="form-control form-control-sm" rows="5">{{ue.acquis}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="row col-sm-12 align-items-center justify-content-around">
+                        <div class="row col-sm-6 align-items-center justify-content-around">
+                            <label for="fr" class="text-center col-form-label col-form-label-sm p-3 font-weight-bold">Savoirs et connaissances théoriques dans l’UE :</label>
+                            <div class="row col-sm-12 align-items-center justify-content-around">
+                                <div class="col-sm-10 p-0">
+                                    <textarea disabled type="text" class="form-control form-control-sm" rows="5">{{ue.savoir}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-sm-6 align-items-center justify-content-around">
+                            <label for="fr" class="text-cente col-form-label col-form-label-sm p-3 font-weight-bold">Techniques, outils et méthodes utilisés dans l’UE :</label>
+                            <div class="row col-sm-12 align-items-center justify-content-around">
+                                <div class="col-sm-10 p-0">
+                                    <textarea disabled type="text" class="form-control form-control-sm" rows="5">{{ue.techniques}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-10 justify-content-center mb-0 table-bordered align-items-center justify-content-around ">
+                <div class="row col-sm-12  align-items-center justify-content-around pt-3 pb-3 pr-5 pl-5">
+                    <label class="text-center col-form-label col-form-label-sm font-weight-bold pb-3">Labels :</label>
+                    <div class="row col-sm-12 align-items-center justify-content-around">
+                        <label class="text-center col-sm-1 col-form-label col-form-label-sm p-0">DDRS</label>
+                        <div class="col-sm-1 p-0 text-center">
+                            <div>
+                                {% if ue.label_ddrs == 0 %}
+                                    <input disabled type="text" class="form-control form-control-sm text-center" value="non" />
+                                {% elseif ue.label_ddrs == 1 %}
+                                    <input disabled type="text" class="form-control form-control-sm text-center" value="oui" />
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-sm-9 p-0">
+                            <textarea disabled type="text" class="form-control form-control-sm" rows="5">{{ue.label_ddrs_prec}}</textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 m-2"></div>
+                    <div class="row col-sm-12 align-items-center justify-content-around">
+                        <label for="fr" class="text-center col-sm-1 col-form-label col-form-label-sm p-0">Recherche</label>
+                        <div class="col-sm-1 p-0 text-center">
+                            <div>
+                                {% if ue.label_recherche == 0 %}
+                                    <input disabled type="text" class="form-control form-control-sm text-center" value="non" />
+                                {% elseif ue.label_recherche == 1 %}
+                                    <input disabled type="text" class="form-control form-control-sm text-center" value="oui" />
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-sm-9 p-0">
+                            <textarea disabled type="text" class="form-control form-control-sm" rows="5">{{ue.label_recherche_prec}}</textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-group row col-sm-8 justify-content-center mb-0 table-bordered align-items-center justify-content-around p-3">
+                <label class="text-center col-form-label col-form-label-sm font-weight-bold pb-3">Commentaire :</label>
+                <div class="row col-sm-12 align-items-center justify-content-around">
+                    <div class="col-sm-12 p-0">
+                        <textarea disabled type="text" class="form-control form-control-sm" rows="5">{{ue.commentaire}}</textarea>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+   </form>
+
+
+    <hr>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Activité</th>
+                <th>Compétences</th>
+                <th>Notion</th>
+                <th>Application</th>
+                <th>Maitrise</th>
+                <th>Expertise</th>
+            </tr>
+        </thead>
+        {% for act in activite %}
+            {% for f in formation %}
+                {% if act.accronym_Forma == f.accronym_Forma or act.accronym_Forma == null %}
+                    {% set compte = '0' %}
+                    {% for n in name %}
+                        {% if n.id_act == act.id_act %}
+                            {% set compte = compte + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if compte != 0 %}
+                        <tr>
+                            <td class="align-middle" rowspan="{{compte}}">{{act.id_act}}. {{act.nom}}</td>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% for n in name %} 
+                {% if n.id_act == act.id_act %}
+                    <td>{{n.nom_competence}}</td>
+                    <td class="align-middle text-center">{% if n != "" %}{{n.notion}}{% endif %}</td>
+                    <td class="align-middle text-center">{% if n != "" %}{{n.application}}{% endif %}</td>
+                    <td class="align-middle text-center">{% if n != "" %}{{n.maitrise}}{% endif %}</td>
+                    <td class="align-middle text-center">{% if n != "" %}{{n.expertise}}{% endif %}</td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </table>
+
+
+
+
+
+{% endblock %}
+
+{% block javascript %}
+    {# // <script src="{{ asset('public\js\modifFiche.js') }}"></script> #}
+
+    <script type="text/javascript">
+
+        var activite = document.getElementById("acti");
+        activite.addEventListener("change", comp);
+    
+        function comp() {
+            var act = activite.value;  
+            cacher();
+            if (act) {
+                afficher(act);
+            }
+        };
+
+        function cacher() {
+            var competence = document.querySelectorAll(".comp");
+
+            for (let i = 0; i < competence.length; i++) {
+                if (!competence[i].classList.contains("d-none")) {
+                    competence[i].classList.toggle("d-none");
+                }
+                
+            }
+        };
+
+        function afficher(id) {
+            var com = document.getElementsByClassName(id);
+            for (let i = 0; i < com.length; i++) {
+                com[i].classList.toggle("d-none");
+            }
+        };
+
+
+    </script> 
+{% endblock %}
